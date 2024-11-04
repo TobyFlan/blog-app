@@ -2,8 +2,10 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 export default function Navbar() {
-    const user = true;
-    const username = true;
+    const user = null;
+    const username = null;
+
+
     return (
         <nav className="bg-white shadow dark:bg-gray-800">
             <div className="container mx-auto px-5 py-4">
