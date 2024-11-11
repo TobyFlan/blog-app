@@ -84,6 +84,7 @@ function UsernameForm() {
 
     useEffect(() => {
         checkUsername(formValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formValue])
 
 
@@ -125,6 +126,7 @@ function UsernameForm() {
         }
     };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const checkUsername = useCallback(
         debounce(async (username : string) => {
             if (username.length >= 3) {
