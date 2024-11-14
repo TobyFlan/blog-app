@@ -17,13 +17,19 @@ function PostItem({ post }) {
   return (
     <Card className="w-full max-w-2xl mx-auto hover:shadow-md transition-shadow duration-200">
       <Link href={`/${post.username}/${post.slug}`} className="block">
-        <CardHeader>
+        <CardHeader className="space-y-1">
+          <div className="text-sm text-muted-foreground">
+            by{' '}
+            <span href={`/${post.username}`} className="font-medium hover:underline">
+              @{post.username}
+            </span>
+          </div>
           <CardTitle className="text-xl font-semibold hover:text-primary transition-colors duration-200">
             {post.title}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground line-clamp-2">{post.content}</p>
+          <p className="text-muted-foreground line-clamp-3">{post.content}</p>
         </CardContent>
         <CardFooter className="flex justify-between items-center text-sm text-muted-foreground">
           <span>{wordCount} words · {minutesToRead} min read</span>

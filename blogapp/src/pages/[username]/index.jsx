@@ -16,15 +16,11 @@ export async function getServerSideProps({ query }) {
 
     if (userDoc.exists()) {
         user = userDoc.data();
-        console.log('user', user);
         
         const postsRef = collection(userDoc.ref, 'posts');
         const postsQuery = firestoreQuery( postsRef, where('published', '==', true), orderBy('createdAt', 'desc'), limit(5));
 
-
         posts = (await getDocs(postsQuery)).docs.map(postToJSON);
-
-        console.log('posts too', posts);
         
     }
 
