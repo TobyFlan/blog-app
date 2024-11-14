@@ -1,186 +1,154 @@
-import { signInWithPopup } from 'firebase/auth';
-import { doc, getDoc, writeBatch } from 'firebase/firestore';
-import { auth, googleAuthProvider, db } from '../../lib/firebase';
-import { Button } from '@/components/ui/button';
-import { useContext, useState, useEffect, useCallback } from 'react';
-import { UserContext } from '../../lib/context';
-import debounce from 'lodash.debounce';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { signInWithPopup } from 'firebase/auth'
+import { doc, getDoc, writeBatch } from 'firebase/firestore'
+import { auth, googleAuthProvider, db } from '../../lib/firebase'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useContext, useState, useEffect, useCallback } from 'react'
+import { UserContext } from '../../lib/context'
+import debounce from 'lodash.debounce'
 
 interface User {
-    uid: string;
-    photoURL: string;
-    displayName: string;
-    username: string;
+  uid: string
+  photoURL: string
+  displayName: string
+  username: string
 }
-
-
 
 export default function Enter({}) {
-    const { user, username } = useContext(UserContext) as { user: User | null, username: string | null };
+  const { user, username } = useContext(UserContext) as { user: User | null; username: string | null }
 
-    console.log("user uname", user, username);
-
-
-    // 1. user signed out <SignInButton />
-    // 2. user signed in, but missing username <UsernameForm />
-    // 3. user signed in, has username <SignOutButton />
-
-    return (
-
-        <main>
-            {user ? (
-                !username ? <UsernameForm /> : <SignOutButton />
-            ) : (
-                <SignInButton />
-            )}
-        </main>
-
-    )
+  return (
+    <main className="container mx-auto px-4 py-8 max-w-md">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">Welcome</CardTitle>
+          <CardDescription className="text-center">
+            {!user ? 'Sign in to get started' : !username ? 'Choose a username' : 'You\'re all set!'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {user ? (!username ? <UsernameForm /> : <SignOutButton />) : <SignInButton />}
+        </CardContent>
+      </Card>
+    </main>
+  )
 }
 
-
-// Sign in with Google button
 function SignInButton() {
-    const signInWithGoogle = async () => {
-        try {
-            await signInWithPopup(auth, googleAuthProvider);
-            console.log('Signed in with Google');
-        } catch (error) {
-            console.error(error);
-        }
+  const signInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleAuthProvider)
+      console.log('Signed in with Google')
+    } catch (error) {
+      console.error(error)
     }
+  }
 
-    return (
-
-        <Button onClick={signInWithGoogle}>
-            Sign in with Google
-        </Button>
-
-    );
-
-
+  return (
+    <Button onClick={signInWithGoogle} className="w-full">
+      Sign in with Google
+    </Button>
+  )
 }
 
-// Sign out button
 function SignOutButton() {
-
-    return (
-        <Button onClick={() => {auth.signOut()}}>
-            Sign out
-        </Button>
-    );
-
+  return (
+    <Button onClick={() => auth.signOut()} variant="outline" className="w-full">
+      Sign out
+    </Button>
+  )
 }
 
-// Username form
 function UsernameForm() {
+  const [formValue, setFormValue] = useState('')
+  const [isValid, setIsValid] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-    const [formValue, setFormValue] = useState('');
-    const [isValid, setIsValid] = useState(false);
-    const [loading, setLoading] = useState(false);
+  const { user, username } = useContext(UserContext) as { user: User | null; username: string | null }
 
-    const { user, username } = useContext(UserContext) as { user: User | null, username: string | null };
+  useEffect(() => {
+    checkUsername(formValue)
+  }, [formValue])
 
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
 
-    useEffect(() => {
-        checkUsername(formValue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [formValue])
+    if (!user) {
+      console.error('User is null')
+      return
+    }
+    const userDoc = doc(db, 'users', user.uid)
+    const usernameDoc = doc(db, 'username', formValue)
 
+    const batch = writeBatch(db)
+    batch.set(userDoc, { username: formValue, photoURL: user.photoURL, displayName: user.displayName })
+    batch.set(usernameDoc, { uid: user.uid })
 
-    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    await batch.commit()
+  }
 
-        // create a ref
-        if (!user) {
-            console.error('User is null');
-            return;
-        }
-        const userDoc = doc(db, 'users', user.uid);
-        const usernameDoc = doc(db, 'username', formValue);
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.toLowerCase()
+    const regex = /^[a-zA-Z0-9_]*$/
 
-
-        const batch = writeBatch(db);
-        batch.set(userDoc, { username: formValue, photoURL: user.photoURL, displayName: user.displayName });
-        batch.set(usernameDoc, { uid: user.uid });
-
-        await batch.commit();
-
+    if (val.length < 3) {
+      setFormValue(val)
+      setLoading(false)
+      setIsValid(false)
     }
 
+    if (regex.test(val)) {
+      setFormValue(val)
+      setLoading(true)
+      setIsValid(false)
+    }
+  }
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const val = e.target.value.toLowerCase();
-        const regex = /^[a-zA-Z0-9_]*$/;
+  const checkUsername = useCallback(
+    debounce(async (username: string) => {
+      if (username.length >= 3) {
+        const ref = doc(db, 'username', username)
+        const docSnap = await getDoc(ref)
+        const exists = docSnap.exists()
+        console.log('Firestore read executed')
+        setIsValid(!exists)
+        setLoading(false)
+      }
+    }, 500),
+    []
+  )
 
-        if (val.length < 3) {
-            setFormValue(val);
-            setLoading(false);
-            setIsValid(false);
-        }
-
-        if (regex.test(val)) {
-            setFormValue(val);
-            setLoading(true);
-            setIsValid(false);
-        }
-    };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const checkUsername = useCallback(
-        debounce(async (username : string) => {
-            if (username.length >= 3) {
-                const ref = doc(db, 'username', username);
-                const docSnap = await getDoc(ref);
-                const exists = docSnap.exists();
-                console.log('Firestore read executed');
-                setIsValid(!exists);
-                setLoading(false);
-            }
-        }, 500), 
-        []
-    );
-
-
-    return (
-        !username && (
-
-            <section>
-                <h3>create username</h3>
-                <form onSubmit={onSubmit}>
-
-                    <input name="username" placeholder="username" value={formValue} onChange={onChange}/>
-
-                    <UsernameMessage username={formValue} isValid={isValid} loading={loading}/>
-
-                    <Button type="submit" disabled={!isValid}>ENTER</Button>
-
-                    <h3>Debug State</h3>
-                    <div>
-                        Username: {formValue}
-                        <br/>
-                        Loading: {loading.toString()}
-                        <br/>
-                        Username Valid: {isValid.toString()}
-                    </div>
-
-                </form>
-            </section>
-
-        )
-    );
-
+  return (
+    !username && (
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div>
+          <Input
+            name="username"
+            placeholder="Username"
+            value={formValue}
+            onChange={onChange}
+            className="w-full"
+          />
+          <UsernameMessage username={formValue} isValid={isValid} loading={loading} />
+        </div>
+        <Button type="submit" disabled={!isValid} className="w-full">
+          Choose Username
+        </Button>
+      </form>
+    )
+  )
 }
 
 function UsernameMessage({ username, isValid, loading }: { username: string; isValid: boolean; loading: boolean }) {
-    if (loading) {
-        return <p>Checking...</p>;
-    } else if (isValid) {
-        return <p className="text-success">{username} is available!</p>;
-    } else if (username && !isValid) {
-        return <p className="text-danger">That username is taken!</p>;
-    } else {
-        return <p></p>;
-    }
+  if (loading) {
+    return <p className="text-sm text-muted-foreground mt-1">Checking...</p>
+  } else if (isValid) {
+    return <p className="text-sm text-green-600 mt-1">{username} is available!</p>
+  } else if (username && !isValid) {
+    return <p className="text-sm text-red-600 mt-1">That username is taken!</p>
+  } else {
+    return <p className="text-sm text-muted-foreground mt-1">Username must be at least 3 characters long.</p>
+  }
 }
-
