@@ -1,7 +1,7 @@
 
-import UserProfile from '../../../components/UserProfile';
-import PostFeed from '../../../components/PostFeed';
-import { getUserWithUsername, postToJSON } from '../../../lib/firebase';
+import UserProfile from '../../components/UserProfile';
+import PostFeed from '../../components/PostFeed';
+import { getUserWithUsername, postToJSON } from '../../lib/firebase';
 import { getDocs, where, limit, orderBy, collection, query as firestoreQuery } from 'firebase/firestore';
 
 export async function getServerSideProps({ query }) {

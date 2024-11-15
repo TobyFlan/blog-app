@@ -2,9 +2,9 @@ import Head from 'next/head'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { collectionGroup, query, orderBy, limit, where, getDocs, startAfter, Timestamp } from 'firebase/firestore'
-import { db, postToJSON } from '../../lib/firebase'
+import { db, postToJSON } from '../lib/firebase'
 import { useState } from 'react'
-import PostFeed from '../../components/PostFeed'
+import PostFeed from '../components/PostFeed'
 
 const LIMIT = 1;
 

@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { signInWithPopup } from 'firebase/auth'
 import { doc, getDoc, writeBatch } from 'firebase/firestore'
-import { auth, googleAuthProvider, db } from '../../lib/firebase'
+import { auth, googleAuthProvider, db } from '../lib/firebase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useContext, useState, useEffect, useCallback } from 'react'
-import { UserContext } from '../../lib/context'
+import { UserContext } from '../lib/context'
 import debounce from 'lodash.debounce'
 
 interface User {
