@@ -6,10 +6,10 @@ export default function UserProfile({ user }) {
     <Card className="w-full max-w-2xl mx-auto mt-8">
       <CardHeader className="flex flex-col items-center space-y-4">
         <Avatar className="w-24 h-24">
-          <AvatarImage src={user.photoURL} alt={user.username} />
-          <AvatarFallback>{user.displayName[0]}</AvatarFallback>
+          <AvatarImage src={user?.photoURL} alt={user?.username} />
+          <AvatarFallback>{user?.displayName[0]}</AvatarFallback>
         </Avatar>
-        <CardTitle className="text-2xl font-bold">{user.username}</CardTitle>
+        <CardTitle className="text-2xl font-bold">{user?.username}</CardTitle>
       </CardHeader>
       {/* <CardContent className="space-y-2">
         <p className="text-sm text-muted-foreground">

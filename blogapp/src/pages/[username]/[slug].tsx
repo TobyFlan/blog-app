@@ -62,8 +62,6 @@ export default function PostsPage(props: { path: string; post: never; userPhotoU
     const post = realtimePost || props.post;
     const userPhoto = props.userPhotoUrl;
 
-    console.log(userPhoto);
-
 
     // Placeholder function for like/unlike functionality
     const handleLikeToggle = () => {
