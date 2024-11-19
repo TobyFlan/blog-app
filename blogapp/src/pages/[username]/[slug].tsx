@@ -9,23 +9,26 @@ import { Heart } from 'lucide-react'
 import { useState } from 'react'
 
 
-export async function getStaticProps({ params }: { params: { username: string; slug: string } }) {
+export async function getStaticProps({ params }: { params: { username: string; slug: string} }) {
     
     const { username, slug } = params;
     const userDoc = await getUserWithUsername(username);
 
     let post;
     let path;
+    let userPhotoUrl;
 
     if (userDoc.exists()) {
         const postDocRef = doc(db, `users/${userDoc.id}/posts`, slug);
         post = postToJSON(await getDoc(postDocRef));
+        const userData = userDoc.data();
+        userPhotoUrl = userData ? userData.photoURL : null;
 
         path = postDocRef.path;
     }
 
     return {
-        props: { post, path },
+        props: { post, path, userPhotoUrl },
         revalidate: 5000,
     }
 
@@ -36,9 +39,9 @@ export async function getStaticPaths() {
     const snap = await getDocs(collectionGroup(db, 'posts'));
 
     const paths = snap.docs.map((doc) => {
-        const { slug, username } = doc.data();
+        const { slug, username, userPhotoUrl } = doc.data();
         return {
-            params: { username, slug },
+            params: { username, slug, userPhotoUrl },
         }
     })
 
@@ -50,13 +53,17 @@ export async function getStaticPaths() {
 
 
 
-export default function PostsPage(props: { path: string; post: unknown; }) {
+export default function PostsPage(props: { path: string; post: never; userPhotoUrl: string}) {
     const postRef = doc(db, props.path);
     const [realtimePost] = useDocumentData(postRef);
 
     const [isLiked, setIsLiked] = useState(false);
 
     const post = realtimePost || props.post;
+    const userPhoto = props.userPhotoUrl;
+
+    console.log(userPhoto);
+
 
     // Placeholder function for like/unlike functionality
     const handleLikeToggle = () => {
@@ -67,7 +74,7 @@ export default function PostsPage(props: { path: string; post: unknown; }) {
         <main className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row gap-8">
             <section className="flex-grow max-w-3xl">
-              <PostContent post={post} />
+              <PostContent post={post} userPhoto={userPhoto} />
             </section>
     
             <div className="w-full md:w-40 flex-shrink-0">

@@ -14,7 +14,7 @@ export async function getServerSideProps({ query }) {
     let user = null;
     let posts = null;
 
-    if (userDoc.exists()) {
+    if (userDoc) {
         user = userDoc.data();
         
         const postsRef = collection(userDoc.ref, 'posts');
@@ -37,11 +37,13 @@ export async function getServerSideProps({ query }) {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function UserProfilePage({ user, posts }) {
+
+
     return (
       <main className="container mx-auto px-4 py-8">
         <UserProfile user={user} />
         <h2 className="text-2xl font-bold mt-12 mb-6 text-center">Latest Posts</h2>
-        <PostFeed posts={posts} />
+        <PostFeed posts={posts}/>
       </main>
     )
   }
