@@ -7,7 +7,7 @@ export default function UserProfile({ user }) {
       <CardHeader className="flex flex-col items-center space-y-4">
         <Avatar className="w-24 h-24">
           <AvatarImage src={user?.photoURL} alt={user?.username} />
-          <AvatarFallback>{user?.displayName[0]}</AvatarFallback>
+          <AvatarFallback>{user?.username[0]}</AvatarFallback>
         </Avatar>
         <CardTitle className="text-2xl font-bold">{user?.username}</CardTitle>
       </CardHeader>

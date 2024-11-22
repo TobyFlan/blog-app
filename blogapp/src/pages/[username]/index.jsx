@@ -1,6 +1,7 @@
 
 import UserProfile from '../../components/UserProfile';
 import PostFeed from '../../components/PostFeed';
+import MetaTags from '../../components/MetaTags';
 import { getUserWithUsername, postToJSON } from '../../lib/firebase';
 import { getDocs, where, limit, orderBy, collection, query as firestoreQuery } from 'firebase/firestore';
 
@@ -49,10 +50,13 @@ export default function UserProfilePage({ user, posts }) {
 
 
     return (
-      <main className="container mx-auto px-4 py-8">
-        <UserProfile user={user} />
-        <h2 className="text-2xl font-bold mt-12 mb-6 text-center">Latest Posts</h2>
-        <PostFeed posts={posts}/>
-      </main>
+      <>
+        <MetaTags title={user.username} description={user.username} />
+        <main className="container mx-auto px-4 py-8">
+          <UserProfile user={user} />
+          <h2 className="text-2xl font-bold mt-12 mb-6 text-center">Latest Posts</h2>
+          <PostFeed posts={posts}/>
+        </main>
+      </>
     )
   }

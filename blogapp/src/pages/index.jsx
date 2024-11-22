@@ -5,6 +5,7 @@ import { collectionGroup, query, orderBy, limit, where, getDocs, startAfter, Tim
 import { db, postToJSON } from '../lib/firebase'
 import { useState } from 'react'
 import PostFeed from '../components/PostFeed'
+import MetaTags from '../components/MetaTags'
 
 const LIMIT = 1;
 
@@ -54,10 +55,7 @@ export default function Home(props) {
 
   return (
     <>
-      <Head>
-        <title key="title">Home</title>
-        <meta name="description" content="Explore the latest posts on our blog" />
-      </Head>
+      <MetaTags title={"Home"} description={"Get the latest posts on our site"} />
 
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-center mb-8">Latest Posts</h1>
