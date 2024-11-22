@@ -71,11 +71,7 @@ export default function PostsPage(props: { path: string; post: never; userPhotoU
     return (
         <main className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row gap-8">
-            <section className="flex-grow max-w-3xl">
-              <PostContent post={post} userPhoto={userPhoto} />
-            </section>
-    
-            <div className="w-full md:w-40 flex-shrink-0">
+          <div className="w-full md:w-40 flex-shrink-0">
               <Card className="sticky top-8">
                 <CardHeader>
                   <CardTitle className="text-center">Likes</CardTitle>
@@ -96,6 +92,11 @@ export default function PostsPage(props: { path: string; post: never; userPhotoU
                 </CardContent>
               </Card>
             </div>
+            <section className="flex-grow max-w-3xl">
+              <PostContent post={post} userPhoto={userPhoto} />
+            </section>
+    
+
           </div>
         </main>
       )

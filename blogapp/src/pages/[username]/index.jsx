@@ -6,7 +6,6 @@ import { getDocs, where, limit, orderBy, collection, query as firestoreQuery } f
 
 export async function getServerSideProps({ query }) {
 
-
     const { username } = query;
 
     const userDoc = await getUserWithUsername(username);
@@ -18,10 +17,20 @@ export async function getServerSideProps({ query }) {
         user = userDoc.data();
         
         const postsRef = collection(userDoc.ref, 'posts');
-        const postsQuery = firestoreQuery( postsRef, where('published', '==', true), orderBy('createdAt', 'desc'), limit(5));
+        const postsQuery = firestoreQuery( 
+          postsRef, 
+          where('published', '==', true), 
+          orderBy('createdAt', 'desc'), 
+          limit(5)
+        );
 
         posts = (await getDocs(postsQuery)).docs.map(postToJSON);
         
+    }
+    else{
+        return {
+            notFound: true
+        }
     }
 
     return {
