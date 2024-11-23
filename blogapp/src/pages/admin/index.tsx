@@ -10,7 +10,7 @@ import { useCollection } from 'react-firebase-hooks/firestore';
 import kebabCase from 'lodash.kebabcase';
 import toast from 'react-hot-toast';
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
@@ -73,7 +73,7 @@ function CreateNewPost() {
 
 
     // create and upload new post to db
-    const createPost = async (e) => {
+    const createPost = async (e: { preventDefault: () => void; }) => {
         e.preventDefault(); 
         const uid = auth.currentUser?.uid;
         if (!uid) {
