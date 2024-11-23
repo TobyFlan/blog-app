@@ -10,15 +10,27 @@ import { useCollection } from 'react-firebase-hooks/firestore';
 import kebabCase from 'lodash.kebabcase';
 import toast from 'react-hot-toast';
 
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+
+
 export default function AdminPostsPage({}) {
 
 
     return (
 
-        <main>
+        <main className="container mx-auto px-4 py-8">
             <AuthCheck>
-                <PostList />
+            <Card className="mb-8">
+                <CardHeader>
+                <CardTitle>Create New Post</CardTitle>
+                </CardHeader>
+                <CardContent>
                 <CreateNewPost />
+                </CardContent>
+            </Card>
+            <PostList />
             </AuthCheck>
         </main>
 
@@ -40,10 +52,10 @@ function PostList() {
 
 
     return (
-        <>
-            <h1>Manage your posts</h1>
+        <div>
+            <h2 className="text-2xl font-bold mb-4">Manage your posts</h2>
             <PostFeed posts={posts} admin />
-        </>
+        </div>
     )
 
 }
@@ -99,20 +111,22 @@ function CreateNewPost() {
     }
 
     return (
-        <form onSubmit={ createPost }>
-            <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="New Article"
-            />
-            <p>
-                <strong>Slug:</strong> {slug}
-            </p>
-            <button type="submit" disabled={!isValid}>
-                Create New Post
-            </button>
-
-        </form>
+        <form onSubmit={createPost} className="space-y-4">
+        <div>
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="New Article Title"
+            className="w-full"
+          />
+        </div>
+        <div className="text-sm text-muted-foreground">
+          <strong>Slug:</strong> {slug}
+        </div>
+        <Button type="submit" disabled={!isValid} className="w-full">
+          Create New Post
+        </Button>
+      </form>
     )
 
 }
