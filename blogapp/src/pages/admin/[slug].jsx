@@ -9,7 +9,7 @@ import ReactMarkdown from "react-markdown"
 import Link from "next/link"
 import toast from "react-hot-toast"
 
-import {db, auth} from "@/lib/firebase"
+import { db, auth } from "@/lib/firebase"
 import { doc, serverTimestamp, updateDoc } from "firebase/firestore"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -91,7 +91,11 @@ function PostManager() {
 
 function PostForm({ defaultValues, postRef, preview }) {
 
-    const { register, handleSubmit, reset, watch, control } = useForm({ defaultValues, mode: 'onChange' });
+    const { register, handleSubmit, reset, watch, control, formState } = useForm({ defaultValues, mode: 'onChange' });
+
+    const { isValid, isDirty, errors } = formState;
+
+
 
     const updatePost = async ({ content, published }) => {
 
@@ -107,9 +111,6 @@ function PostForm({ defaultValues, postRef, preview }) {
 
     };
 
-    const watchPublished = watch('published');
-
-
     return (
         <form onSubmit={handleSubmit(updatePost)} className="space-y-4">
             {preview && (
@@ -122,12 +123,20 @@ function PostForm({ defaultValues, postRef, preview }) {
     
             <div className={preview ? 'hidden' : ''}>
                 <Textarea
-                    {...register('content')}
+                    {...register('content', {
+                        maxLength: { value: 20000, message: 'Content is too long' },
+                        required: { value: true, message: 'Content is required' },
+                        minLength: { value: 5, message: 'Content is too short' },
+                    })}
                     rows={15}
                     placeholder="Write your post content here..."
                     className="w-full"
                 />
-    
+
+                {errors.content && (
+                    <p className="text-sm text-red-500">{errors.content.message}</p>
+                )}
+                    
                 <div className="flex items-center space-x-2 mt-4">
                     <Controller
                         name="published"
@@ -149,7 +158,7 @@ function PostForm({ defaultValues, postRef, preview }) {
                     {watch('published') ? 'This post is public and visible to all users.' : 'This post is currently a draft and only visible to you.'}
                 </div>
   
-                <Button type="submit" className="mt-4">
+                <Button type="submit" className="mt-4" disabled={!isDirty || !isValid}>
                     Save Changes
                 </Button>
             </div>
