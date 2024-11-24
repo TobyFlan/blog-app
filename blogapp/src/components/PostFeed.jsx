@@ -10,13 +10,15 @@ export default function PostFeed({ posts, admin }) {
   )
 }
 
-function PostItem({ post }) {
+function PostItem({ post, admin }) {
   const wordCount = post?.content.trim().split(/\s+/g).length
   const minutesToRead = (wordCount / 100 + 1).toFixed(0)
 
+  const path  = admin ? `/admin/${post.slug}` : `/${post.username}/${post.slug}`
+
   return (
     <Card className="w-full max-w-2xl mx-auto hover:shadow-md transition-shadow duration-200">
-      <Link href={`/${post.username}/${post.slug}`} className="block">
+      <Link href={path} className="block">
         <CardHeader className="space-y-1">
           <div className="text-sm text-muted-foreground">
             by{' '}
