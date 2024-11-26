@@ -122,6 +122,7 @@ function PostForm({ defaultValues, postRef, preview }) {
             )}
     
             <div className={preview ? 'hidden' : ''}>
+
                 <Textarea
                     {...register('content', {
                         maxLength: { value: 20000, message: 'Content is too long' },

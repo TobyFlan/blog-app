@@ -6,7 +6,10 @@ import PostContent from "@/components/PostContent";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from '@/components/ui/button'
 import { Heart } from 'lucide-react'
-import { useState } from 'react'
+import Link from 'next/link'
+
+import HeartButton from '@/components/HeartButton'
+import AuthCheck from "@/components/AuthCheck";
 
 
 export async function getStaticProps({ params }: { params: { username: string; slug: string} }) {
@@ -57,16 +60,9 @@ export default function PostsPage(props: { path: string; post: never; userPhotoU
     const postRef = doc(db, props.path);
     const [realtimePost] = useDocumentData(postRef);
 
-    const [isLiked, setIsLiked] = useState(false);
-
     const post = realtimePost || props.post;
     const userPhoto = props.userPhotoUrl;
 
-
-    // Placeholder function for like/unlike functionality
-    const handleLikeToggle = () => {
-        setIsLiked((prev) => !prev);
-    }
 
     return (
         <main className="container mx-auto px-4 py-8">
@@ -81,13 +77,19 @@ export default function PostsPage(props: { path: string; post: never; userPhotoU
                     <p className="text-2xl font-bold flex items-center gap-2">
                       {post.heartCount || 0} <Heart className="h-6 w-6 text-red-500 fill-current" />
                     </p>
-                    <Button
-                      variant={isLiked ? "secondary" : "default"}
-                      onClick={handleLikeToggle}
-                      className="w-full"
+
+                    <AuthCheck
+                      fallback={
+                        <Link href="/enter">
+                          <Button>
+                            ❤️ Log in to like this post
+                          </Button>
+                        </Link>
+                      }  
                     >
-                      {isLiked ? 'Unlike' : 'Like'}
-                    </Button>
+                      <HeartButton postRef={postRef} />
+                    </AuthCheck>
+
                   </div>
                 </CardContent>
               </Card>
