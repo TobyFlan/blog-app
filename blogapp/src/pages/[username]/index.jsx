@@ -8,7 +8,6 @@ import { useContext } from 'react';
 import { UserContext } from '../../lib/context';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import AuthCheck from '@/components/AuthCheck';
 
 export async function getServerSideProps({ query }) {
 

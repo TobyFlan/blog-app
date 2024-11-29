@@ -30,6 +30,12 @@ export async function getStaticProps({ params }: { params: { username: string; s
         path = postDocRef.path;
     }
 
+    if(post?.updatedAt === 0) {
+        return {
+            notFound: true,
+        }
+    }
+
     return {
         props: { post, path, userPhotoUrl },
         revalidate: 5000,
