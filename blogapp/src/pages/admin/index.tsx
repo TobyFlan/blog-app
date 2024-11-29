@@ -69,7 +69,7 @@ function CreateNewPost() {
     const slug = encodeURI(kebabCase(title));
 
     // validate title input
-    const isValid = title.length > 3 && title.length < 100;
+    const isValid = title.length > 3 && title.length < 100 && slug != 'posts';
 
 
     // create and upload new post to db

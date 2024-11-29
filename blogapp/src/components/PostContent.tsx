@@ -3,7 +3,6 @@ import ReactMarkdown from 'react-markdown';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import MetaTags from './MetaTags';
-import Custom404 from '@/pages/404';
 
 
 export default function PostContent({ post, userPhoto }) {

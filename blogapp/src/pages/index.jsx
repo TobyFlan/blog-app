@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { collectionGroup, query, orderBy, limit, where, getDocs, startAfter, Timestamp } from 'firebase/firestore'
