@@ -42,7 +42,6 @@ function PostManager() {
     const router = useRouter();
     const { slug } = router.query;
 
-    // this error is pointless as the function wont run if the user is not authenticated
     const postRef = doc(db, 'users', auth.currentUser.uid, 'posts', slug);
 
     const [post] = useDocumentData(postRef);
