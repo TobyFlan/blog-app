@@ -26,7 +26,7 @@ export default function Navbar() {
                         {username ? (
                             <>
                                 <Button asChild variant="ghost">
-                                <Link href="/admin">Write Posts</Link>
+                                    <Link href="/admin">Write Posts</Link>
                                 </Button>
                                 <Link href={`/${username}`}>
                                 <Avatar>

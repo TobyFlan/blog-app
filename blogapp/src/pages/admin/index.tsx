@@ -1,7 +1,7 @@
 import AuthCheck from '@/components/AuthCheck';
 import PostFeed from '@/components/PostFeed';
 import { UserContext } from '@/lib/context';
-import { db, auth } from '@/lib/firebase';
+import { db, auth, postToJSON } from '@/lib/firebase';
 import { serverTimestamp, collection, doc, query, orderBy, setDoc } from 'firebase/firestore';
 
 import { useContext, useState } from 'react';
@@ -22,15 +22,15 @@ export default function AdminPostsPage({}) {
 
         <main className="container mx-auto px-4 py-8">
             <AuthCheck>
-            <Card className="mb-8">
-                <CardHeader>
-                <CardTitle>Create New Post</CardTitle>
-                </CardHeader>
-                <CardContent>
-                <CreateNewPost />
-                </CardContent>
-            </Card>
-            <PostList />
+                <Card className="mb-8">
+                    <CardHeader>
+                    <CardTitle>Create New Post</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                    <CreateNewPost />
+                    </CardContent>
+                </Card>
+                <PostList />
             </AuthCheck>
         </main>
 
@@ -45,10 +45,10 @@ function PostList() {
     const userDocRef = doc(db, 'users', auth.currentUser.uid);
     const ref = collection(userDocRef, 'posts');
 
-    const q = query(ref, orderBy('createdAt'));
+    const q = query(ref, orderBy('updatedAt', 'desc'));
     const [querySnapshot] = useCollection(q);
 
-    const posts = querySnapshot?.docs.map((doc) => doc.data());
+    const posts = querySnapshot?.docs.map(postToJSON);
 
 
     return (
@@ -69,7 +69,7 @@ function CreateNewPost() {
     const slug = encodeURI(kebabCase(title));
 
     // validate title input
-    const isValid = title.length > 3 && title.length < 100 && slug != 'posts';
+    const isValid = title.length > 3 && title.length < 100;
 
 
     // create and upload new post to db

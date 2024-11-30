@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, Auth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore, Firestore, collection, query, where, getDocs, limit } from 'firebase/firestore';
+import { getFirestore, Firestore, collection, query, where, getDocs, limit, Timestamp } from 'firebase/firestore';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCmSa6Mxr6J0FicARUBNFwR50NfIGbbENY",
@@ -36,7 +36,7 @@ export function postToJSON(doc: DocumentSnapshot) {
     const data = doc.data();
     return {
         ...data,
-        createdAt: data?.createdAt.toMillis() || 0,
-        updatedAt: data?.updatedAt.toMillis() || 0,
+        createdAt: data?.createdAt instanceof Timestamp ? data.createdAt.toMillis() : data?.clientCreatedAt || 0,
+        updatedAt: data?.updatedAt instanceof Timestamp ? data.updatedAt.toMillis() : 0,
     };
 }

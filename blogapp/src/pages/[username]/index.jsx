@@ -48,16 +48,10 @@ export async function getServerSideProps({ query }) {
 
 }
 
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function UserProfilePage({ user, posts }) {
 
   const { username } = useContext(UserContext);
   const ownAccount = username && username === user.username;
-
-  console.log('ownAccount', ownAccount);
-  
-
 
   return (
     <>
@@ -76,7 +70,7 @@ export default function UserProfilePage({ user, posts }) {
         )}
 
         <h2 className="text-2xl font-bold mt-12 mb-6 text-center">Latest Posts</h2>
-        <PostFeed posts={posts} admin={ownAccount}/>
+        <PostFeed posts={posts} />
       </main>
     </>
   )
