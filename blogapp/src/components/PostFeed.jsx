@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Edit, Eye, Clock, Heart } from 'lucide-react'
+import { Edit, Eye, Clock } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { getUserWithUsername } from '@/lib/firebase'
 import { useState, useEffect } from 'react'
