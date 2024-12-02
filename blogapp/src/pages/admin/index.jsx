@@ -73,7 +73,7 @@ function CreateNewPost() {
 
 
     // create and upload new post to db
-    const createPost = async (e: { preventDefault: () => void; }) => {
+    const createPost = async (e) => {
         e.preventDefault(); 
         const uid = auth.currentUser?.uid;
         if (!uid) {
