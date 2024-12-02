@@ -31,7 +31,7 @@ export default function PostContent({ post, userPhoto }) {
                   <p className="text-sm text-muted-foreground">{createdAt}</p>
                 </div>
               </div>
-              <div className="prose dark:prose-invert max-w-none">
+              <div className="prose dark:prose-invert max-w-none" style={{overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}>
                 <ReactMarkdown>{post?.content}</ReactMarkdown>
               </div>
             </CardContent>
