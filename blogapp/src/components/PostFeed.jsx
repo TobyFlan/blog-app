@@ -2,7 +2,10 @@ import Link from 'next/link'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Edit, Eye } from 'lucide-react'
+import { Edit, Eye, Clock, Heart } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { getUserWithUsername } from '@/lib/firebase'
+import { useState, useEffect } from 'react'
 
 export default function PostFeed({ posts, admin }) {
   return (
@@ -16,59 +19,69 @@ function PostItem({ post, admin }) {
   const wordCount = post?.content.trim().split(/\s+/g).length
   const minutesToRead = (wordCount / 100 + 1).toFixed(0)
 
+  const [user, setUser] = useState()
+
+  useEffect(() => {
+    async function fetchUser() {
+      const userData = await getUserWithUsername(post.username);
+      setUser(userData.data());
+    }
+    fetchUser();
+  }, [post.username]);
 
   return (
-    <Card className="w-full max-w-2xl mx-auto hover:shadow-md transition-shadow duration-200">
+    <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
       {!admin ? (
-        <Link href={`/${post.username}/${post.slug}`} className="block">
+        <Link href={`/${post.username}/${post.slug}`} className="flex flex-col h-full">
           <CardHeader className="space-y-1">
-            <div className="text-sm text-muted-foreground">
-              by{' '}
-              <span className="font-medium hover:underline">
-                @{post.username}
-              </span>
+            <div className="flex items-center space-x-2">
+              <Avatar className="w-8 h-8">
+                <AvatarImage src={user?.photoURL} alt={post.username} />
+                <AvatarFallback>{post.username[0].toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium">@{post.username}</span>
             </div>
             <CardTitle className="text-xl font-semibold hover:text-primary transition-colors duration-200">
               {post.title}
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-grow">
             <p className="text-muted-foreground line-clamp-3">{post.content}</p>
           </CardContent>
           <CardFooter className="flex justify-between items-center text-sm text-muted-foreground">
-            <span>{wordCount} words · {minutesToRead} min read</span>
+            <div className="flex items-center space-x-2">
+              <Clock className="w-4 h-4" />
+              <span>{minutesToRead} min read</span>
+            </div>
             <Badge variant="secondary" className="flex items-center space-x-1">
-              <span>❤️</span>
+              <p className="w-4 h-4" >❤️</p>
               <span>{post.heartCount || 0}</span>
             </Badge>
           </CardFooter>
         </Link>
       ) : (
-        <CardHeader className="space-y-1">
-          <div className="text-sm text-muted-foreground">
-            by{' '}
-            <span className="font-medium hover:underline">
-              @{post.username}
-            </span>
-          </div>
-          <CardTitle className="text-xl font-semibold hover:text-primary transition-colors duration-200">
-            {post.title}
-          </CardTitle>
-          {admin && (
-            <div className="flex justify-between items-center">
+        <>
+          <CardHeader className="space-y-1">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Avatar className="w-8 h-8">
+                  <AvatarImage src={post.userPhotoURL} alt={post.username} />
+                  <AvatarFallback>{post.username[0].toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium">@{post.username}</span>
+              </div>
               <Badge variant={post.published ? "default" : "secondary"}>
                 {post.published ? "Published" : "Draft"}
               </Badge>
-              <div className="text-sm text-muted-foreground">
-                Last updated: {new Date(post.updatedAt).toLocaleDateString()}
-              </div>
             </div>
-          )}
-        </CardHeader>
-      )}
-      {admin && (
-        <>
-          <CardContent>
+            <CardTitle className="text-xl font-semibold hover:text-primary transition-colors duration-200">
+              {post.title}
+            </CardTitle>
+            <div className="text-sm text-muted-foreground">
+              Last updated: {new Date(post.updatedAt).toLocaleDateString()}
+            </div>
+          </CardHeader>
+          <CardContent className="flex-grow">
             <p className="text-muted-foreground line-clamp-3">{post.content}</p>
           </CardContent>
           <CardFooter className="flex justify-between items-center text-sm text-muted-foreground">

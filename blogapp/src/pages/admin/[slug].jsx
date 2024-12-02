@@ -18,7 +18,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import Custom404 from "../404"
 
 
@@ -73,6 +73,11 @@ function PostManager() {
     }
   };
 
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+    setDeleteSlug('');
+  };
+
   return(
       <main className="container mx-auto px-4 py-8">
       {post && (
@@ -106,26 +111,32 @@ function PostManager() {
                     Delete Post
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] bg-background border-border">
+                <DialogContent className="w-[95vw] max-w-[425px] bg-background border border-border shadow-lg rounded-lg">
                   <DialogHeader>
-                    <DialogTitle>Are you sure you want to delete this post?</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="text-lg font-semibold">Are you sure you want to delete this post?</DialogTitle>
+                    <p className="text-sm text-muted-foreground mt-2">
                       This action cannot be undone. Please type the post slug to confirm.
-                    </DialogDescription>
+                    </p>
                   </DialogHeader>
                   <Input
                     placeholder={post.slug}
                     value={deleteSlug}
                     onChange={(e) => setDeleteSlug(e.target.value)}
+                    className="mt-4"
                   />
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                  <DialogFooter className="mt-6 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleCancelDelete()}
+                      className="w-full sm:w-auto"
+                    >
                       Cancel
                     </Button>
                     <Button
                       variant="destructive"
                       onClick={handleDelete}
                       disabled={deleteSlug !== post.slug}
+                      className="w-full sm:w-auto"
                     >
                       Delete Post
                     </Button>
