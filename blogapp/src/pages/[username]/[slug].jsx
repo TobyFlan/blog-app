@@ -1,6 +1,6 @@
 import { getUserWithUsername, postToJSON } from "@/lib/firebase";
 import { db } from "@/lib/firebase";
-import { collectionGroup, doc, getDoc, getDocs } from "firebase/firestore";
+import { collectionGroup, doc, getDoc, getDocs, collection, query, orderBy } from "firebase/firestore";
 import { useDocumentData } from "react-firebase-hooks/firestore";
 import PostContent from "@/components/PostContent";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,8 +11,10 @@ import Link from 'next/link'
 import HeartButton from '@/components/HeartButton'
 import AuthCheck from "@/components/AuthCheck";
 
+import { useState, useEffect } from "react";
 
-export async function getStaticProps({ params }: { params: { username: string; slug: string} }) {
+
+export async function getStaticProps({ params }) {
     
     const { username, slug } = params;
     const userDoc = await getUserWithUsername(username);
@@ -62,13 +64,42 @@ export async function getStaticPaths() {
 
 
 
-export default function PostsPage(props: { path: string; post: never; userPhotoUrl: string}) {
+export default function PostsPage(props) {
     const postRef = doc(db, props.path);
     const [realtimePost] = useDocumentData(postRef);
 
     const post = realtimePost || props.post;
     const userPhoto = props.userPhotoUrl;
 
+    // fetch comments for the post
+    const [comments, setComments] = useState([]);
+    const [loadingComments, setLoadingComments] = useState(true);
+    
+    useEffect(() => {
+
+      console.log("fetching comments");
+
+      const fetchComments = async () => {
+
+        const commentsColl = collection(postRef, 'comments');
+        const commentsQuery = query(commentsColl, orderBy('createdAt', 'desc'));
+        const commentsSnap = await getDocs(commentsQuery);
+        const commentsData = commentsSnap.docs.map(doc => doc.data());
+
+        setLoadingComments(false);
+        setComments(commentsData);
+        console.log("comments: ", commentsData);
+      }
+
+      fetchComments();
+
+      
+
+
+    }, [postRef]);
+
+    
+    console.log(loadingComments, " : ", comments);
 
     return (
         <main className="container mx-auto px-4 py-8">
