@@ -3,10 +3,10 @@ import { UserContext } from '../lib/context';
 import { getUserWithUsername } from '@/lib/firebase'
 
 
-export default function CommentFeed({ comments, user }) {
+export default function CommentFeed({ comments }) {
   return (
     <div className="space-y-6 mt-8">
-      {comments ? comments.map((comment) => <CommentItem comment={comment} key={comment.id} user={user} />) : null}
+      {comments ? comments.map((comment) => <CommentItem comment={comment} key={comment.id}/>) : null}
     </div>
   )
 }
@@ -14,9 +14,12 @@ export default function CommentFeed({ comments, user }) {
 function CommentItem({ comment }){
 
     const { username } = useContext(UserContext);
-    const user = getUserWithUsername(username);
 
-    if(user.data().uid === comment.uid){
+    const createdAt = comment.createdAt?.seconds
+    ? new Date(comment.createdAt.seconds * 1000).toLocaleDateString('en-UK')
+    : 'Unknown date';
+    
+    if(username === comment.username){
         return (
             <div className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
                 <div className="flex flex-col h-full">
@@ -29,7 +32,7 @@ function CommentItem({ comment }){
                     </div>
                     <div className="flex justify-between items-center text-sm text-muted-foreground">
                         <div className="flex items-center space-x-2">
-                        <span>{comment.createdAt}</span>
+                        <span>{createdAt}</span>
                         </div>
                     </div>
                     </div>
@@ -51,7 +54,7 @@ function CommentItem({ comment }){
                 </div>
                 <div className="flex justify-between items-center text-sm text-muted-foreground">
                     <div className="flex items-center space-x-2">
-                    <span>{comment.createdAt}</span>
+                    <span>{createdAt}</span>
                     </div>
                 </div>
                 </div>

@@ -10,6 +10,7 @@ import Link from 'next/link'
 
 import HeartButton from '@/components/HeartButton'
 import AuthCheck from "@/components/AuthCheck";
+import CommentFeed from "@/components/CommentFeed";
 
 import { useState, useEffect } from "react";
 
@@ -77,8 +78,6 @@ export default function PostsPage(props) {
     
     useEffect(() => {
 
-      console.log("fetching comments");
-
       const fetchComments = async () => {
 
         const commentsColl = collection(postRef, 'comments');
@@ -88,7 +87,6 @@ export default function PostsPage(props) {
 
         setLoadingComments(false);
         setComments(commentsData);
-        console.log("comments: ", commentsData);
       }
 
       fetchComments();
@@ -99,42 +97,51 @@ export default function PostsPage(props) {
     }, [postRef]);
 
     
-    console.log(loadingComments, " : ", comments);
 
     return (
         <main className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row gap-8">
-          <div className="w-full md:w-40 flex-shrink-0">
-              <Card className="sticky top-8">
-                <CardHeader>
-                  <CardTitle className="text-center">Likes</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col items-center gap-4">
-                    <p className="text-2xl font-bold flex items-center gap-2">
-                      {post.heartCount || 0} <Heart className="h-6 w-6 text-red-500 fill-current" />
-                    </p>
+            <div className="w-full md:w-40 flex-shrink-0">
+                <Card className="sticky top-8">
+                  <CardHeader>
+                    <CardTitle className="text-center">Likes</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-col items-center gap-4">
+                      <p className="text-2xl font-bold flex items-center gap-2">
+                        {post.heartCount || 0} <Heart className="h-6 w-6 text-red-500 fill-current" />
+                      </p>
 
-                    <AuthCheck
-                      fallback={
-                        <Link href="/enter">
-                          <Button>
-                            ❤️ Log in to like this post
-                          </Button>
-                        </Link>
-                      }  
-                    >
-                      <HeartButton postRef={postRef} />
-                    </AuthCheck>
+                      <AuthCheck
+                        fallback={
+                          <Link href="/enter">
+                            <Button>
+                              ❤️ Log in to like this post
+                            </Button>
+                          </Link>
+                        }  
+                      >
+                        <HeartButton postRef={postRef} />
+                      </AuthCheck>
 
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             <section className="flex-grow max-w-3xl">
               <PostContent post={post} userPhoto={userPhoto} />
             </section>
-    
+
+            <section className="w-full md:w-80">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Comments</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CommentFeed comments={comments} />
+                </CardContent>
+              </Card>    
+            </section>       
 
           </div>
         </main>
