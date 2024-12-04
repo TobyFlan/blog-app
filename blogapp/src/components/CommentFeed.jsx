@@ -1,9 +1,10 @@
 import { useContext } from 'react';
 import { UserContext } from '../lib/context';
-import { getUserWithUsername } from '@/lib/firebase'
-
 
 export default function CommentFeed({ comments }) {
+
+    console.log(comments);
+
   return (
     <div className="space-y-6 mt-8">
       {comments ? comments.map((comment) => <CommentItem comment={comment} key={comment.id}/>) : null}

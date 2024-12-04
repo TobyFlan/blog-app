@@ -1,6 +1,6 @@
-import { getUserWithUsername, postToJSON } from "@/lib/firebase";
+import { getUserWithUsername, postToJSON, auth } from "@/lib/firebase";
 import { db } from "@/lib/firebase";
-import { collectionGroup, doc, getDoc, getDocs, collection, query, orderBy } from "firebase/firestore";
+import { collectionGroup, doc, getDoc, addDoc,  getDocs, collection, query, orderBy, updateDoc, increment } from "firebase/firestore";
 import { useDocumentData } from "react-firebase-hooks/firestore";
 import PostContent from "@/components/PostContent";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,7 +12,8 @@ import HeartButton from '@/components/HeartButton'
 import AuthCheck from "@/components/AuthCheck";
 import CommentFeed from "@/components/CommentFeed";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { UserContext } from "@/lib/context";
 
 
 export async function getStaticProps({ params }) {
@@ -91,10 +92,9 @@ export default function PostsPage(props) {
 
       fetchComments();
 
-      
-
-
     }, [postRef]);
+
+
 
     
 
@@ -132,6 +132,29 @@ export default function PostsPage(props) {
               <PostContent post={post} userPhoto={userPhoto} />
             </section>
 
+
+            {/* Add comments form */}
+            <section className="w-full md:w-80">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Add a comment</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <AuthCheck
+                    fallback={
+                      <Link href="/enter">
+                        <Button>
+                          Sign in to comment
+                        </Button>
+                      </Link>
+                    }
+                  >
+                    <CommentForm postRef={postRef} />
+                  </AuthCheck>
+                </CardContent>
+              </Card>
+            </section>
+
             <section className="w-full md:w-80">
               <Card>
                 <CardHeader>
@@ -146,4 +169,45 @@ export default function PostsPage(props) {
           </div>
         </main>
       )
+}
+
+function CommentForm({ postRef }) {
+
+  const [commentText, setCommentText] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { username } = useContext(UserContext);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const commentRef = collection(postRef, 'comments');
+
+    await addDoc(commentRef, {
+      content: commentText,
+      createdAt: new Date(),
+      username: username,
+      uid: auth.currentUser.uid,
+    })
+    await updateDoc(postRef, {
+      commentCount: increment(1),
+    })
+
+    setCommentText('');
+    setLoading(false);
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex gap-4">
+      <input 
+        type="text" 
+        value={commentText} 
+        onChange={(e) => setCommentText(e.target.value)} 
+        placeholder="Comment..." 
+        className="flex-grow p-2 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500" 
+      />
+      <Button disabled={loading} type="submit">Post</Button>
+    </form>
+  )
+
 }
