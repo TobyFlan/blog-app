@@ -97,6 +97,7 @@ export default function PostsPage(props) {
   // function to handling the deletion of comments
   const deleteComment = async (commentId) => {
     const commentRef = doc(postRef, 'comments', commentId);
+    // TODO: batch these for security
     await deleteDoc(commentRef);
     await updateDoc(postRef, {
       commentCount: increment(-1),
@@ -183,6 +184,7 @@ function CommentForm({ postRef }) {
 
     const commentRef = collection(postRef, 'comments');
 
+    // TODO: batch these for security
     await addDoc(commentRef, {
       content: commentText,
       createdAt: new Date(),
@@ -192,6 +194,8 @@ function CommentForm({ postRef }) {
     await updateDoc(postRef, {
       commentCount: increment(1),
     })
+
+    toast.success('Comment posted!');
 
     setCommentText('');
     setLoading(false);

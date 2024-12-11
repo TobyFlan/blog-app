@@ -53,10 +53,16 @@ function PostItem({ post, admin }) {
               <Clock className="w-4 h-4" />
               <span>{minutesToRead} min read</span>
             </div>
-            <Badge variant="secondary" className="flex items-center space-x-1">
-              <p className="w-4 h-4" >❤️</p>
-              <span>{post.heartCount || 0}</span>
-            </Badge>
+            <div className="flex items-center space-x-2">
+              <Badge variant="secondary" className="flex items-center space-x-1">
+                <p className="w-4 h-4">❤️</p>
+                <span>{post.heartCount || 0}</span>
+              </Badge>
+              <Badge variant="secondary" className="flex items-center space-x-1">
+                <p className="w-4 h-4">💬</p>
+                <span>{post.commentCount || 0}</span>
+              </Badge>
+            </div>
           </CardFooter>
         </Link>
       ) : (
