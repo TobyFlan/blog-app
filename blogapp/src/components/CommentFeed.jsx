@@ -1,66 +1,83 @@
 import { useContext } from 'react';
 import { UserContext } from '../lib/context';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { getUserWithUsername } from '@/lib/firebase';
+import { useState, useEffect } from 'react';
 
-export default function CommentFeed({ comments }) {
-
-    console.log(comments);
-
+export default function CommentFeed({ comments, deleteComment }) {
   return (
-    <div className="space-y-6 mt-8">
-      {comments ? comments.map((comment) => <CommentItem comment={comment} key={comment.id}/>) : null}
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Comments</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {comments && comments.length > 0 ? (
+            comments.map((comment) => (
+              <CommentItem key={comment.id} comment={comment} deleteComment={deleteComment} />
+            ))
+          ) : (
+            <p className="text-muted-foreground">No comments yet.</p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 
-function CommentItem({ comment }){
+function CommentItem({ comment, deleteComment }) {
+  const [userPhotoURL, setUserPhotoURL] = useState(null);
+  const { username } = useContext(UserContext);
 
-    const { username } = useContext(UserContext);
-
-    const createdAt = comment.createdAt?.seconds
+  const createdAt = comment.createdAt?.seconds
     ? new Date(comment.createdAt.seconds * 1000).toLocaleDateString('en-UK')
     : 'Unknown date';
-    
-    if(username === comment.username){
-        return (
-            <div className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
-                <div className="flex flex-col h-full">
-                    <div className="space-y-1">
-                    <div className="flex items-center space-x-2">
-                        <span className="text-sm font-medium">@{comment.username} you own this comment!</span>
-                    </div>
-                    <div className="flex-grow">
-                        <p className="text-muted-foreground line-clamp-3">{comment.content}</p>
-                    </div>
-                    <div className="flex justify-between items-center text-sm text-muted-foreground">
-                        <div className="flex items-center space-x-2">
-                        <span>{createdAt}</span>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            </div>
-        )
+
+  const canDelete = comment.username === username;
+
+  useEffect(() => {
+    async function fetchUserPhoto() {
+      const userDoc = await getUserWithUsername(comment.username);
+      if (userDoc?.exists()) {
+        setUserPhotoURL(userDoc.data()?.photoURL);
+      }
     }
+    fetchUserPhoto();
+  }, [comment.username]);
 
 
-    return (
-        <div className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
-            <div className="flex flex-col h-full">
-                <div className="space-y-1">
-                <div className="flex items-center space-x-2">
-                    <span className="text-sm font-medium">@{comment.username}</span>
-                </div>
-                <div className="flex-grow">
-                    <p className="text-muted-foreground line-clamp-3">{comment.content}</p>
-                </div>
-                <div className="flex justify-between items-center text-sm text-muted-foreground">
-                    <div className="flex items-center space-x-2">
-                    <span>{createdAt}</span>
-                    </div>
-                </div>
-                </div>
-            </div>
+  
+  return (
+    <div className="space-y-2">
+      <div className="flex items-start space-x-4">
+        <Avatar className="w-10 h-10">
+          <AvatarImage src={userPhotoURL} />
+          <AvatarFallback>{comment.username[0].toUpperCase()}</AvatarFallback>
+        </Avatar>
+        <div className="flex-grow">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">@{comment.username}</span>
+            <span className="text-xs text-muted-foreground">{createdAt}</span>
+          </div>
+          <p className="text-sm mt-1">{comment.content}</p>
         </div>
-    )
-
+      </div>
+      {canDelete && (
+        <div className="flex justify-end">
+          <Button
+            onClick={() => deleteComment(comment.id)}
+            variant="ghost"
+            size="sm"
+            className="text-red-500 hover:text-red-700"
+          >
+            Delete
+          </Button>
+        </div>
+      )}
+      <Separator className="mt-2" />
+    </div>
+  );
 }
