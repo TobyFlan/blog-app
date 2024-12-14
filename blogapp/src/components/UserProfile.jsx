@@ -12,9 +12,6 @@ export default function UserProfile({ user }) {
         <CardTitle className="text-2xl font-bold">{user?.username}</CardTitle>
       </CardHeader>
       {/* <CardContent className="space-y-2">
-        <p className="text-sm text-muted-foreground">
-          <span className="font-semibold text-foreground">Email:</span> {user.email}
-        </p>
         {user.bio && (
           <p className="text-sm">
             <span className="font-semibold">Bio:</span> {user.bio}

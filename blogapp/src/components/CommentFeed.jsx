@@ -7,6 +7,8 @@ import { Separator } from "@/components/ui/separator"
 import { getUserWithUsername } from '@/lib/firebase';
 import { useState, useEffect } from 'react';
 
+import Markdown from 'react-markdown';
+
 export default function CommentFeed({ comments, deleteComment }) {
   return (
     <Card>
@@ -62,7 +64,9 @@ function CommentItem({ comment, deleteComment }) {
             <span className="text-sm font-medium">@{comment.username}</span>
             <span className="text-xs text-muted-foreground">{createdAt}</span>
           </div>
-          <p className="text-sm mt-1">{comment.content}</p>
+          <div className="prose dark:prose-invert max-w-none text-sm mt-1" style={{overflowWrap: 'anywhere', whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}>
+            <Markdown>{comment.content}</Markdown>
+          </div>
         </div>
       </div>
       {canDelete && (

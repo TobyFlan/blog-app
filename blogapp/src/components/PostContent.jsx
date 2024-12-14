@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import MetaTags from './MetaTags';
@@ -32,7 +32,7 @@ export default function PostContent({ post, userPhoto }) {
                 </div>
               </div>
               <div className="prose dark:prose-invert max-w-none" style={{overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}>
-                <ReactMarkdown>{post?.content}</ReactMarkdown>
+                <Markdown>{post?.content}</Markdown>
               </div>
             </CardContent>
           </Card>
