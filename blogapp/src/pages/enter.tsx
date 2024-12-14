@@ -93,14 +93,14 @@ function UsernameForm() {
     const val = e.target.value.toLowerCase()
     const regex = /^[a-zA-Z0-9_]*$/
 
-    if (val.length < 3) {
-      setFormValue(val)
+    setFormValue(val)
+
+    if (val.length < 3 || val.length > 20) {
       setLoading(false)
       setIsValid(false)
     }
 
     if (regex.test(val)) {
-      setFormValue(val)
       setLoading(true)
       setIsValid(false)
     }
@@ -108,7 +108,7 @@ function UsernameForm() {
 
   const checkUsername = useCallback(
     debounce(async (username: string) => {
-      if (username.length >= 3) {
+      if (username.length >= 3 && username.length <= 20) {
         const ref = doc(db, 'username', username)
         const docSnap = await getDoc(ref)
         const exists = docSnap.exists()
@@ -116,6 +116,10 @@ function UsernameForm() {
         setIsValid(!exists)
         setLoading(false)
       }
+      else {
+        setIsValid(false)
+      }
+      setLoading(false)
     }, 500),
     []
   )
@@ -146,9 +150,9 @@ function UsernameMessage({ username, isValid, loading }: { username: string; isV
     return <p className="text-sm text-muted-foreground mt-1">Checking...</p>
   } else if (isValid) {
     return <p className="text-sm text-green-600 mt-1">{username} is available!</p>
-  } else if (username && !isValid) {
+  } else if ((username.length > 3 && username.length < 20) && !isValid) {
     return <p className="text-sm text-red-600 mt-1">That username is taken!</p>
   } else {
-    return <p className="text-sm text-muted-foreground mt-1">Username must be at least 3 characters long.</p>
+    return <p className="text-sm text-muted-foreground mt-1">Username must be between 3 and 20 characters long.</p>
   }
 }
