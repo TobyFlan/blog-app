@@ -53,12 +53,16 @@ export async function getStaticPaths() {
 
     const snap = await getDocs(collectionGroup(db, 'posts'));
 
-    const paths = snap.docs.map((doc) => {
-        const { slug, username, userPhotoUrl } = doc.data();
-        return {
-            params: { username, slug, userPhotoUrl },
+    const paths = snap.docs
+      .map(doc => {
+        const { slug, username } = doc.data();
+        if (!slug || !username) {
+          console.warn('Missing slug or username for doc:', doc.id);
+          return null;
         }
-    })
+        return { params: { username, slug } };
+      })
+      .filter(Boolean); // Filter out invalid entries
 
     return {
         paths,
