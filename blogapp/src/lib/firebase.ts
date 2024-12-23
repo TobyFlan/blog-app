@@ -1,22 +1,23 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, Auth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore, Firestore, collection, query, where, getDocs, limit, Timestamp } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCmSa6Mxr6J0FicARUBNFwR50NfIGbbENY",
     authDomain: "blog-app-b361d.firebaseapp.com",
     projectId: "blog-app-b361d",
-    storageBucket: "blog-app-b361d.appspot.com",
+    storageBucket: "blog-app-b361d.firebasestorage.app",
     messagingSenderId: "934134467857",
     appId: "1:934134467857:web:31e5aa6da3ea42a85b10b0",
     measurementId: "G-1BLGN2DLG7"
-};
+  };
 
 const app = initializeApp(firebaseConfig);
 
 export const auth : Auth = getAuth(app);
 export const googleAuthProvider = new GoogleAuthProvider();
-
+export const storage = getStorage(app);
 export const db : Firestore = getFirestore(app);
 
 // helper functions

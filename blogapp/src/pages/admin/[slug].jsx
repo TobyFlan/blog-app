@@ -20,6 +20,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import Custom404 from "../404"
+import ImageUploader from "@/components/ImageUploader"
 
 
 
@@ -184,6 +185,8 @@ function PostForm({ defaultValues, postRef, preview }) {
             )}
     
             <div className={preview ? 'hidden' : ''}>
+
+                <ImageUploader />
 
                 <Textarea
                     {...register('content', {
