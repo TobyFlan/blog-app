@@ -112,7 +112,7 @@ function UsernameForm() {
   const checkUsername = useCallback(
     debounce(async (username: string) => {
       if (username.length >= 3 && username.length <= 20) {
-        const ref = doc(db, 'username', username)
+        const ref = doc(db, 'username', username.trim())
         const docSnap = await getDoc(ref)
         const exists = docSnap.exists()
         console.log('Firestore read executed')
