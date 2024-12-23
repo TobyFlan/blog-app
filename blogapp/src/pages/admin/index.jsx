@@ -75,16 +75,19 @@ function CreateNewPost() {
     // create and upload new post to db
     const createPost = async (e) => {
         e.preventDefault(); 
+
+        const trimmedSlug = slug.replace(/-/g, '');
+
         const uid = auth.currentUser?.uid;
         if (!uid) {
             toast.error('User not authenticated');
             return;
         }
-        const ref = doc(db, 'users', uid, 'posts', slug);
+        const ref = doc(db, 'users', uid, 'posts', trimmedSlug);
 
         const data = {
             title,
-            slug,
+            slug: trimmedSlug,
             uid,
             username,
             published: false,
@@ -101,7 +104,7 @@ function CreateNewPost() {
             toast.success('Post created!');
 
             // automatically navigate to the new post
-            router.push(`/admin/${slug}`);
+            router.push(`/admin/${trimmedSlug}`);
         }
         catch(err){
             console.error(err);

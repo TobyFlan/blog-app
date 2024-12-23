@@ -75,15 +75,18 @@ function UsernameForm() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    // remove trailing whitespace
+    const trimmed = formValue.trim()
+
     if (!user) {
       console.error('User is null')
       return
     }
     const userDoc = doc(db, 'users', user.uid)
-    const usernameDoc = doc(db, 'username', formValue)
+    const usernameDoc = doc(db, 'username', trimmed)
 
     const batch = writeBatch(db)
-    batch.set(userDoc, { username: formValue, photoURL: user.photoURL, displayName: user.displayName })
+    batch.set(userDoc, { username: trimmed, photoURL: user.photoURL, displayName: user.displayName })
     batch.set(usernameDoc, { uid: user.uid })
 
     await batch.commit()
