@@ -14,6 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
+import MetaTags from '@/components/MetaTags';
+
 
 export default function AdminPostsPage({}) {
 
@@ -21,6 +23,7 @@ export default function AdminPostsPage({}) {
     return (
 
         <main className="container mx-auto px-4 py-8">
+            <MetaTags title={"Your Posts"} description={"Create new posts or edit old ones!"}/>
             <AuthCheck>
                 <Card className="mb-8">
                     <CardHeader>

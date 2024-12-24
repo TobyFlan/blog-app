@@ -22,6 +22,8 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import Custom404 from "../404"
 import ImageUploader from "@/components/ImageUploader"
 
+import MetaTags from "@/components/MetaTags"
+
 
 
 export default function AdminPostEdit({}) {
@@ -81,8 +83,10 @@ function PostManager() {
 
   return(
       <main className="container mx-auto px-4 py-8">
+      
       {post && (
         <div className="grid md:grid-cols-3 gap-8">
+          <MetaTags title={"Editing '" + post.slug + "'"} description={"editing '" + post.slug + "'"}/>
           <Card className="md:col-span-2">
             <CardHeader>
               <CardTitle>{post.title}</CardTitle>
